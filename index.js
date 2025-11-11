@@ -84,7 +84,23 @@ async function run() {
 
 
 
-    
+    app.put("/events/:id", async (req, res) => {
+      const id = req.params.id;
+      const eventData = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          title: eventData.title,
+          description: eventData.description,
+          eventType: eventData.eventType,
+          thumbnail: eventData.thumbnail,
+          location: eventData.location,
+          eventDate: new Date(eventData.eventDate) // Ensure it's a Date object
+        }
+      };
+      const result = await eventCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
 
 
 
