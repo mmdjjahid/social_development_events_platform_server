@@ -29,11 +29,7 @@ async function run() {
 
     app.post("/events", async (req, res) => {
       const eventData = req.body;
-      const doc = {
-        ...eventData,
-        eventDate: new Date(eventData.eventDate)
-      };
-      const result = await eventCollection.insertOne(doc);
+      const result = await eventCollection.insertOne(eventData);
       res.send(result);
     });
 
@@ -62,6 +58,33 @@ async function run() {
       const event = await eventCollection.findOne(query);
       res.send(event);
     });
+
+
+    app.post("/join-event", async (req, res) => {
+      const joinedEventData = req.body;
+      const result = await joinedCollection.insertOne(joinedEventData);
+      res.send(result);
+    });
+
+    app.get("/joined-events/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { userEmail: email };
+      const options = { sort: { eventDate: 1 } };
+      const joinedEvents = await joinedCollection.find(query, options).toArray();
+      res.send(joinedEvents);
+    });
+
+
+    app.get("/manage-events/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { creatorEmail: email };
+      const myEvents = await eventCollection.find(query).sort({ eventDate: 1 }).toArray();
+      res.send(myEvents);
+    });
+
+
+
+    
 
 
 
